@@ -11,6 +11,7 @@ const URL = "https://cerulean-marlin-wig.cyclic.app";
 const App = () => {
   const [activityDetails, setActivityDetails] = useState([]);
   const [showAll, setShowAll] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const nonArchivedLogs = useMemo(
     () => activityDetails.filter(({ is_archived }) => !is_archived),
@@ -22,15 +23,18 @@ const App = () => {
     [activityDetails]
   );
   async function fetchActivityDetails() {
+    setLoading(true);
     fetch(`${URL}/activities`)
       .then((res) => res.json())
-      .then((data) => setActivityDetails(data));
+      .then((data) => setActivityDetails(data))
+      .finally(() => setLoading(false));
   }
   useEffect(() => {
     fetchActivityDetails();
   }, []);
 
   const updateDetail = async (id, value) => {
+    setLoading(true);
     fetch(`${URL}/activities/${id}`, {
       method: "PATCH",
       body: JSON.stringify({ is_archived: value }),
@@ -42,6 +46,7 @@ const App = () => {
   };
 
   const updateAllDetails = async () => {
+    setLoading(true);
     async function updateDetailsLog(id) {
       fetch(`${URL}/activities/${id}`, {
         method: "PATCH",
@@ -60,12 +65,18 @@ const App = () => {
   return (
     <div className='container'>
       <Header />
-      <LogTypes showAll={showAll} setShowAll={setShowAll} />
-      <UpdateAll showAll={showAll} updateAllDetails={updateAllDetails} />
-      <ActivityDetails
-        logs={showAll ? nonArchivedLogs : archivedLogs}
-        updateDetail={updateDetail}
-      />
+      {loading ? (
+        <h2>Loading...</h2>
+      ) : (
+        <React.Fragment>
+          <LogTypes showAll={showAll} setShowAll={setShowAll} />
+          <UpdateAll showAll={showAll} updateAllDetails={updateAllDetails} />
+          <ActivityDetails
+            logs={showAll ? nonArchivedLogs : archivedLogs}
+            updateDetail={updateDetail}
+          />
+        </React.Fragment>
+      )}
     </div>
   );
 };
