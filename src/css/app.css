@@ -16,10 +16,19 @@
 
   background: white;
   border-radius: 3px;
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, .9);
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.9);
+  overflow-y: scroll;
 }
 
 #app .container-view {
   padding: 20px;
 }
 
+.log {
+  cursor: pointer;
+  padding: 1.2rem 0rem;
+}
+
+.log:hover {
+  background-color: lightgrey;
+}
